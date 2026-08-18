@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscripciones 2026 - Escuela Municipal de Música de San Martín</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: #1a3a52;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .taller-section {
+            margin-bottom: 40px;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        .taller-titulo {
+            font-size: 26px;
+            font-weight: 700;
+            color: #1a3a52;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 3px solid #5c7cfa;
+        }
+
+        .horarios-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .dia-group {
+            margin-bottom: 24px;
+        }
+
+        .dia-titulo {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-left: 4px solid #5c7cfa;
+            padding-left: 12px;
+        }
+
+        .horario-card {
+            background: #f8f9fa;
+            border: 1.5px solid #e9ecef;
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .horario-card:hover {
+            border-color: #5c7cfa;
+            background: #f1f3ff;
+            box-shadow: 0 4px 12px rgba(92, 124, 250, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .horario-card.deshabilitado {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #f0f0f0;
+        }
+
+        .horario-card.deshabilitado:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #e9ecef;
+            background: #f0f0f0;
+        }
+
+        .horario-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .horario-tiempo {
+            font-weight: 700;
+            font-size: 16px;
+            color: #1a3a52;
+        }
+
+        .horario-sede {
+            font-size: 13px;
+            color: #666;
+            background: #e8f0ff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .horario-profesor {
+            font-size: 13px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .categorias {
+            display: grid;
+            gap: 10px;
+        }
+
+        .categoria {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: white;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .categoria-nombre {
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .vacantes-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .disponibles {
+            background: #d3f9d8;
+            color: #2f7e1a;
+        }
+
+        .completo {
+            background: #ffe0e0;
+            color: #a32d2d;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-titulo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a3a52;
+            margin-bottom: 8px;
+        }
+
+        .modal-subtitulo {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #5c7cfa;
+            background: #f1f3ff;
+            box-shadow: 0 0 0 3px rgba(92, 124, 250, 0.1);
+        }
+
+        .error-message {
+            color: #a32d2d;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #5c7cfa;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4c63d2;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(92, 124, 250, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #2d3748;
+        }
+
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .confirmation {
+            display: none;
+            text-align: center;
+        }
+
+        .confirmation.active {
+            display: block;
+        }
+
+        .confirmation-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .confirmation-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a3a52;
+            margin-bottom: 12px;
+        }
+
+        .confirmation-datos {
+            background: #f1f3ff;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .confirmation-dato {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(92, 124, 250, 0.2);
+        }
+
+        .confirmation-dato:last-child {
+            border-bottom: none;
+        }
+
+        .confirmation-dato-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .confirmation-dato-valor {
+            color: #1a3a52;
+            font-weight: 600;
+        }
+
+        .confirmation-text {
+            font-size: 15px;
+            color: #666;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        .whatsapp-btn {
+            display: inline-block;
+            background: #25d366;
+            color: white;
+            padding: 14px 32px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+            margin: 16px 0;
+        }
+
+        .whatsapp-btn:hover {
+            background: #20ba5e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+
+        .info-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 16px;
+            border-radius: 6px;
+            margin-top: 16px;
+            font-size: 13px;
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #704214;
+        }
+
+        .obligatorio-advertencia {
+            background: #ffe0e0;
+            border-left: 4px solid #a32d2d;
+            padding: 16px;
+            border-radius: 6px;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #a32d2d;
+        }
+
+        .cierre-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: #e9ecef;
+            color: #2d3748;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+        }
+
+        .cierre-btn:hover {
+            background: #dee2e6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🎵 Inscripción a Talleres 2026</h1>
+        <p>Escuela Municipal de Música de San Martín</p>
+        <div class="badge">BETA - Versión de prueba</div>
+    </div>
+
+    <div class="taller-section">
+        <div class="taller-titulo">VIOLÍN</div>
+        <div class="horarios-grid" id="violinGrid"></div>
+    </div>
+
+    <div class="taller-section">
+        <div class="taller-titulo">CANTO</div>
+        <div class="horarios-grid" id="cantoGrid"></div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modal">
+    <div class="modal-content">
+        <div class="form-section">
+            <h2 class="modal-titulo" id="formTaller">VIOLÍN - Lunes 15 a 15:50</h2>
+            <div class="modal-subtitulo" id="formDetalles">Sede: SUÁREZ | Profesor: Prof Romero</div>
+
+            <form onsubmit="return enviarFormulario(event)">
+                <div class="form-group">
+                    <label>Nombre completo *</label>
+                    <input type="text" id="nombre" required placeholder="Tu nombre completo">
+                    <div class="error-message" id="error-nombre">Por favor, ingresa tu nombre</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="email" required placeholder="tu@email.com">
+                    <div class="error-message" id="error-email">Por favor, ingresa un email válido</div>
+                </div>
+
+                <div class="form-group">
+                    <label>DNI *</label>
+                    <input type="text" id="dni" required placeholder="12345678" maxlength="10">
+                    <div class="error-message" id="error-dni">Por favor, ingresa un DNI válido</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Teléfono / WhatsApp *</label>
+                    <input type="tel" id="telefono" required placeholder="+54 9 11 2345678">
+                    <div class="error-message" id="error-telefono">Por favor, ingresa un teléfono válido</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Fecha de nacimiento *</label>
+                    <input type="date" id="fechaNacimiento" required>
+                    <div class="error-message" id="error-fechaNacimiento">Por favor, ingresa tu fecha de nacimiento</div>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Confirmar inscripción</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="confirmation" id="confirmacion">
+            <div class="confirmation-icon">✅</div>
+            <h2 class="confirmation-title">¡Inscripción confirmada!</h2>
+            
+            <div class="confirmation-datos" id="datosConfirmacion">
+                <div class="confirmation-dato">
+                    <span class="confirmation-dato-label">Taller:</span>
+                    <span class="confirmation-dato-valor" id="confTaller">-</span>
+                </div>
+                <div class="confirmation-dato">
+                    <span class="confirmation-dato-label">Horario:</span>
+                    <span class="confirmation-dato-valor" id="confHorario">-</span>
+                </div>
+                <div class="confirmation-dato">
+                    <span class="confirmation-dato-label">Sede:</span>
+                    <span class="confirmation-dato-valor" id="confSede">-</span>
+                </div>
+                <div class="confirmation-dato">
+                    <span class="confirmation-dato-label">Profesor:</span>
+                    <span class="confirmation-dato-valor" id="confProfesor">-</span>
+                </div>
+                <div class="confirmation-dato">
+                    <span class="confirmation-dato-label">Categoría:</span>
+                    <span class="confirmation-dato-valor" id="confCategoria">-</span>
+                </div>
+                <div class="confirmation-dato">
+                    <span class="confirmation-dato-label">Tu DNI:</span>
+                    <span class="confirmation-dato-valor" id="confDNI">-</span>
+                </div>
+            </div>
+
+            <p class="confirmation-text">
+                Tu solicitud ha sido registrada en nuestro sistema.<br>
+                <strong>Ahora, contactanos por WhatsApp para que te compartamos el grupo del taller.</strong>
+            </p>
+
+            <a href="#" class="whatsapp-btn" id="whatsappBtn" target="_blank">
+                📱 Contactar por WhatsApp
+            </a>
+
+            <div class="obligatorio-advertencia">
+                <strong>⚠️ Paso obligatorio</strong><br>
+                Haz click en el botón de WhatsApp para que podamos completar tu inscripción y enviarte el grupo del taller.
+            </div>
+
+            <div class="info-box">
+                <strong>Próximos pasos:</strong><br>
+                1️⃣ Haz click en "Contactar por WhatsApp"<br>
+                2️⃣ Nosotros te responderemos con el link del grupo<br>
+                3️⃣ ¡Listo! Estarás en el grupo de tu taller
+            </div>
+
+            <button class="cierre-btn" onclick="cerrarModal()" style="width: 100%;">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// DATOS COMPLETOS - VIOLÍN + CANTO
+const datosInscripciones = {
+    VIOLIN: [
+        // LUNES
+        { dia: 'LUNES', horario: '15 a 15:50', sede: 'SUÁREZ', profesor: 'Prof Romero', categorias: { 'NIÑOS (8 a 12)': 2, 'NIVEL 1 ADULTOS (18+)': 1, 'NIVEL 2 ADULTOS (18+)': 3 } },
+        { dia: 'LUNES', horario: '16 a 16:50', sede: 'SUÁREZ', profesor: 'Prof Romero', categorias: { 'COMPLETO': 0 } },
+        { dia: 'LUNES', horario: '17 a 17:50', sede: 'SUÁREZ', profesor: 'Prof Romero', categorias: { 'NIVEL 1 ADULTOS (18+)': 5, 'NIVEL 2 ADULTOS (18+)': 3 } },
+        { dia: 'LUNES', horario: '18 a 18:50', sede: 'SUÁREZ', profesor: 'Prof Romero', categorias: { 'COMPLETO': 0 } },
+        // MARTES
+        { dia: 'MARTES', horario: '14 a 14:50', sede: 'SAN MARTÍN', profesor: 'Prof Romero', categorias: { 'NIVEL 1 ADULTOS (18+)': 2, 'NIVEL 2 ADULTOS (18+)': 1 } },
+        { dia: 'MARTES', horario: '15 a 15:50', sede: 'SAN MARTÍN', profesor: 'Prof Romero', categorias: { 'NIVEL 1 ADULTOS (18+)': 4, 'NIVEL 2 ADULTOS (18+)': 2 } },
+        { dia: 'MARTES', horario: '16 a 16:50', sede: 'SAN MARTÍN', profesor: 'Prof Romero', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MARTES', horario: '17 a 17:50', sede: 'SAN MARTÍN', profesor: 'Prof Romero', categorias: { 'NIVEL 1 ADULTOS (18+)': 1, 'NIVEL 2 ADULTOS (18+)': 2 } },
+        { dia: 'MARTES', horario: '18 a 18:50', sede: 'SAN MARTÍN', profesor: 'Prof Romero', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MARTES', horario: '19 a 19:50', sede: 'SAN MARTÍN', profesor: 'Prof Romero', categorias: { 'COMPLETO': 0 } },
+        // JUEVES
+        { dia: 'JUEVES', horario: '15 a 15:50', sede: 'SAN MARTÍN', profesor: 'Prof Romero', categorias: { 'NIVEL 1 ADULTOS (18+)': 3, 'NIVEL 2 ADULTOS (18+)': 1 } },
+        { dia: 'JUEVES', horario: '16 a 16:50', sede: 'SAN MARTÍN', profesor: 'Prof Romero', categorias: { 'COMPLETO': 0 } },
+        { dia: 'JUEVES', horario: '17 a 17:50', sede: 'SAN MARTÍN', profesor: 'Prof Romero', categorias: { 'NIVEL 1 JÓVENES (13 a 17)': 2, 'NIVEL 2 JÓVENES (13 a 17)': 1 } },
+        { dia: 'JUEVES', horario: '18 a 18:50', sede: 'SAN MARTÍN', profesor: 'Prof Romero', categorias: { 'NIVEL 1 JÓVENES (13 a 17)': 4 } },
+        { dia: 'JUEVES', horario: '19 a 19:50', sede: 'SAN MARTÍN', profesor: 'Prof Romero', categorias: { 'COMPLETO': 0 } },
+        // VIERNES
+        { dia: 'VIERNES', horario: '15 a 15:50', sede: 'BILLINGHURST', profesor: 'Prof Romero', categorias: { 'NIVEL 1 ADULTOS (18+)': 2, 'NIVEL 2 ADULTOS (18+)': 3 } },
+        { dia: 'VIERNES', horario: '16 a 16:50', sede: 'BILLINGHURST', profesor: 'Prof Romero', categorias: { 'COMPLETO': 0 } },
+        { dia: 'VIERNES', horario: '17 a 17:50', sede: 'BILLINGHURST', profesor: 'Prof Romero', categorias: { 'COMPLETO': 0 } },
+        { dia: 'VIERNES', horario: '18 a 18:50', sede: 'BILLINGHURST', profesor: 'Prof Romero', categorias: { 'COMPLETO': 0 } },
+        // SÁBADOS
+        { dia: 'SÁBADOS', horario: '11 a 11:50', sede: 'SUÁREZ', profesor: 'Prof Romero', categorias: { 'NIVEL 1 ADULTOS (18+)': 5, 'NIVEL 2 ADULTOS (18+)': 2 } },
+        { dia: 'SÁBADOS', horario: '12 a 12:50', sede: 'SUÁREZ', profesor: 'Prof Romero', categorias: { 'COMPLETO': 0 } },
+        { dia: 'SÁBADOS', horario: '13 a 13:50', sede: 'SUÁREZ', profesor: 'Prof Romero', categorias: { 'COMPLETO': 0 } },
+    ],
+    CANTO: [
+        // LUNES
+        { dia: 'LUNES', horario: '15 a 15:50', sede: 'SUÁREZ', profesor: 'Prof MAGLIOCCO SANTIAGO', categorias: { 'NIÑOS (8 a 12)': 1, 'NIVEL 1 ADULTOS (18+)': 3, 'NIVEL 2 ADULTOS (18+)': 8 } },
+        { dia: 'LUNES', horario: '16 a 16:50', sede: 'SUÁREZ', profesor: 'Prof MAGLIOCCO SANTIAGO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'LUNES', horario: '17 a 17:50', sede: 'SUÁREZ', profesor: 'Prof MAGLIOCCO SANTIAGO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'LUNES', horario: '18 a 18:50', sede: 'SUÁREZ', profesor: 'Prof MAGLIOCCO SANTIAGO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'LUNES', horario: '19 a 19:50', sede: 'SUÁREZ', profesor: 'Prof MAGLIOCCO SANTIAGO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'LUNES', horario: '11 a 11:50', sede: 'BILLINGHURST', profesor: 'Prof DONDERO CAMILA', categorias: { 'NIVEL 1 ADULTOS (18+)': 3, 'NIVEL 2 ADULTOS (18+)': 5 } },
+        { dia: 'LUNES', horario: '12 a 12:50', sede: 'BILLINGHURST', profesor: 'Prof DONDERO CAMILA', categorias: { 'NIVEL 1 ADULTOS (18+)': 1, 'NIVEL 2 ADULTOS (18+)': 4 } },
+        { dia: 'LUNES', horario: '15 a 15:50', sede: 'SAN MARTÍN', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'LUNES', horario: '16 a 16:50', sede: 'SAN MARTÍN', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'LUNES', horario: '17 a 17:50', sede: 'SAN MARTÍN', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'LUNES', horario: '18 a 18:50', sede: 'SAN MARTÍN', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'LUNES', horario: '19 a 19:50', sede: 'SAN MARTÍN', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        
+        // MARTES
+        { dia: 'MARTES', horario: '17 a 17:50', sede: 'SAN MARTÍN', profesor: 'Prof PATERNO AGUSTINA', categorias: { 'NIÑOS (8 a 12)': 5 } },
+        { dia: 'MARTES', horario: '19 a 19:50', sede: 'SAN MARTÍN', profesor: 'Prof PATERNO AGUSTINA', categorias: { 'NIVEL 1 JÓVENES (13 a 17)': 4 } },
+        { dia: 'MARTES', horario: '14 a 14:50', sede: 'BILLINGHURST', profesor: 'Prof SANTIAGO MAGLIOCCO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MARTES', horario: '15 a 15:50', sede: 'BILLINGHURST', profesor: 'Prof SANTIAGO MAGLIOCCO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MARTES', horario: '16 a 16:50', sede: 'BILLINGHURST', profesor: 'Prof SANTIAGO MAGLIOCCO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MARTES', horario: '17 a 17:50', sede: 'BILLINGHURST', profesor: 'Prof SANTIAGO MAGLIOCCO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MARTES', horario: '18 a 18:50', sede: 'BILLINGHURST', profesor: 'Prof SANTIAGO MAGLIOCCO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MARTES', horario: '19 a 19:50', sede: 'BILLINGHURST', profesor: 'Prof SANTIAGO MAGLIOCCO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MARTES', horario: '15 a 15:50', sede: 'VILLA MAIPU', profesor: 'Prof CESPÓN VICTORIA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MARTES', horario: '16 a 16:50', sede: 'VILLA MAIPU', profesor: 'Prof CESPÓN VICTORIA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MARTES', horario: '17 a 17:50', sede: 'VILLA MAIPU', profesor: 'Prof CESPÓN VICTORIA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MARTES', horario: '18 a 18:50', sede: 'VILLA MAIPU', profesor: 'Prof CESPÓN VICTORIA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MARTES', horario: '19 a 19:50', sede: 'VILLA MAIPU', profesor: 'Prof CESPÓN VICTORIA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MARTES', horario: '15 a 15:50', sede: 'SUÁREZ', profesor: 'Prof DONDERO ELIANA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MARTES', horario: '16 a 16:50', sede: 'SUÁREZ', profesor: 'Prof DONDERO ELIANA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MARTES', horario: '17 a 17:50', sede: 'SUÁREZ', profesor: 'Prof DONDERO ELIANA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MARTES', horario: '18 a 18:50', sede: 'SUÁREZ', profesor: 'Prof DONDERO ELIANA', categorias: { 'COMPLETO': 0 } },
+        
+        // MIÉRCOLES
+        { dia: 'MIÉRCOLES', horario: '15 a 15:50', sede: 'SAN MARTÍN', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MIÉRCOLES', horario: '16 a 16:50', sede: 'SAN MARTÍN', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MIÉRCOLES', horario: '17 a 17:50', sede: 'SAN MARTÍN', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MIÉRCOLES', horario: '18 a 18:50', sede: 'SAN MARTÍN', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MIÉRCOLES', horario: '19 a 19:50', sede: 'SAN MARTÍN', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MIÉRCOLES', horario: '10 a 10:50', sede: 'MUSEO ROSA', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MIÉRCOLES', horario: '11 a 11:50', sede: 'MUSEO ROSA', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'MIÉRCOLES', horario: '12 a 12:50', sede: 'MUSEO ROSA', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        
+        // JUEVES
+        { dia: 'JUEVES', horario: '15 a 15:50', sede: 'SUÁREZ', profesor: 'Prof MAGLIOCCO SANTIAGO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'JUEVES', horario: '16 a 16:50', sede: 'SUÁREZ', profesor: 'Prof MAGLIOCCO SANTIAGO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'JUEVES', horario: '17 a 17:50', sede: 'SUÁREZ', profesor: 'Prof MAGLIOCCO SANTIAGO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'JUEVES', horario: '18 a 18:50', sede: 'SUÁREZ', profesor: 'Prof MAGLIOCCO SANTIAGO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'JUEVES', horario: '19 a 19:50', sede: 'SUÁREZ', profesor: 'Prof MAGLIOCCO SANTIAGO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'JUEVES', horario: '15 a 15:50', sede: 'VILLA LYNCH', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'JUEVES', horario: '16 a 16:50', sede: 'VILLA LYNCH', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'JUEVES', horario: '17 a 17:50', sede: 'VILLA LYNCH', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'JUEVES', horario: '18 a 18:50', sede: 'VILLA LYNCH', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'JUEVES', horario: '19 a 19:50', sede: 'VILLA LYNCH', profesor: 'Prof DONDERO CAMILA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'JUEVES', horario: '14 a 14:50', sede: 'BILLINGHURST', profesor: 'Prof CESPÓN VICTORIA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'JUEVES', horario: '15 a 15:50', sede: 'BILLINGHURST', profesor: 'Prof CESPÓN VICTORIA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'JUEVES', horario: '16 a 16:50', sede: 'BILLINGHURST', profesor: 'Prof CESPÓN VICTORIA', categorias: { 'NIÑOS (8 a 12)': 1 } },
+        { dia: 'JUEVES', horario: '17 a 17:50', sede: 'BILLINGHURST', profesor: 'Prof CESPÓN VICTORIA', categorias: { 'NIÑOS (8 a 12)': 2, 'NIVEL 1 ADULTOS (18+)': 1 } },
+        { dia: 'JUEVES', horario: '18 a 18:50', sede: 'BILLINGHURST', profesor: 'Prof CESPÓN VICTORIA', categorias: { 'NIVEL 2 JÓVENES (13 a 17)': 4 } },
+        
+        // VIERNES
+        { dia: 'VIERNES', horario: '15 a 15:50', sede: 'SAN MARTÍN', profesor: 'Prof PATERNO ELIANA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'VIERNES', horario: '16 a 16:50', sede: 'SAN MARTÍN', profesor: 'Prof PATERNO ELIANA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'VIERNES', horario: '17 a 17:50', sede: 'SAN MARTÍN', profesor: 'Prof PATERNO ELIANA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'VIERNES', horario: '18 a 18:50', sede: 'SAN MARTÍN', profesor: 'Prof PATERNO ELIANA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'VIERNES', horario: '19 a 19:50', sede: 'SAN MARTÍN', profesor: 'Prof PATERNO ELIANA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'VIERNES', horario: '15 a 15:50', sede: 'SAN MARTÍN', profesor: 'Prof PATERNO AGUSTINA', categorias: { 'NIÑOS (8 a 12)': 5 } },
+        { dia: 'VIERNES', horario: '16 a 16:50', sede: 'SAN MARTÍN', profesor: 'Prof PATERNO AGUSTINA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'VIERNES', horario: '17 a 17:50', sede: 'SAN MARTÍN', profesor: 'Prof PATERNO AGUSTINA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'VIERNES', horario: '18 a 18:50', sede: 'SAN MARTÍN', profesor: 'Prof PATERNO AGUSTINA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'VIERNES', horario: '19 a 19:50', sede: 'SAN MARTÍN', profesor: 'Prof PATERNO AGUSTINA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'VIERNES', horario: '15 a 15:50', sede: 'SUÁREZ', profesor: 'Prof MAGLIOCCO SANTIAGO', categorias: { 'NIÑOS (8 a 12)': 5 } },
+        { dia: 'VIERNES', horario: '16 a 16:50', sede: 'SUÁREZ', profesor: 'Prof MAGLIOCCO SANTIAGO', categorias: { 'NIÑOS (8 a 12)': 4 } },
+        { dia: 'VIERNES', horario: '17 a 17:50', sede: 'SUÁREZ', profesor: 'Prof MAGLIOCCO SANTIAGO', categorias: { 'NIVEL 1 ADULTOS (18+)': 1 } },
+        { dia: 'VIERNES', horario: '18 a 18:50', sede: 'SUÁREZ', profesor: 'Prof MAGLIOCCO SANTIAGO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'VIERNES', horario: '19 a 19:50', sede: 'SUÁREZ', profesor: 'Prof MAGLIOCCO SANTIAGO', categorias: { 'COMPLETO': 0 } },
+        { dia: 'VIERNES', horario: '12 a 12:50', sede: 'SUÁREZ', profesor: 'Prof CESPÓN VICTORIA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'VIERNES', horario: '13 a 13:50', sede: 'SUÁREZ', profesor: 'Prof CESPÓN VICTORIA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'VIERNES', horario: '14 a 14:50', sede: 'SUÁREZ', profesor: 'Prof CESPÓN VICTORIA', categorias: { 'COMPLETO': 0 } },
+        
+        // SÁBADOS
+        { dia: 'SÁBADOS', horario: '12 a 12:50', sede: 'SUÁREZ', profesor: 'Prof PATERNO AGUSTINA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'SÁBADOS', horario: '13 a 13:50', sede: 'SUÁREZ', profesor: 'Prof PATERNO AGUSTINA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'SÁBADOS', horario: '14 a 14:50', sede: 'SUÁREZ', profesor: 'Prof PATERNO AGUSTINA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'SÁBADOS', horario: '15 a 15:50', sede: 'SUÁREZ', profesor: 'Prof PATERNO AGUSTINA', categorias: { 'NIÑOS (8 a 12)': 7 } },
+        { dia: 'SÁBADOS', horario: '16 a 16:50', sede: 'SUÁREZ', profesor: 'Prof PATERNO AGUSTINA', categorias: { 'NIÑOS (8 a 12)': 5 } },
+        { dia: 'SÁBADOS', horario: '17 a 17:50', sede: 'SUÁREZ', profesor: 'Prof PATERNO AGUSTINA', categorias: { 'NIVEL 1 ADULTOS (18+)': 2 } },
+        { dia: 'SÁBADOS', horario: '12 a 12:50', sede: 'SUÁREZ', profesor: 'Prof CESPÓN VICTORIA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'SÁBADOS', horario: '13 a 13:50', sede: 'SUÁREZ', profesor: 'Prof CESPÓN VICTORIA', categorias: { 'COMPLETO': 0 } },
+        { dia: 'SÁBADOS', horario: '14 a 14:50', sede: 'SUÁREZ', profesor: 'Prof CESPÓN VICTORIA', categorias: { 'COMPLETO': 0 } },
+    ]
+};
+
+let tallerActual = {};
+const WHATSAPP_NUMERO = '5491136857966';
+
+function renderizarTaller(taller) {
+    const gridId = taller.toLowerCase() + 'Grid';
+    const grid = document.getElementById(gridId);
+    const horarios = datosInscripciones[taller];
+
+    const diasOrdenados = {};
+    const ordenDias = ['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADOS'];
+
+    horarios.forEach(h => {
+        if (!diasOrdenados[h.dia]) diasOrdenados[h.dia] = [];
+        diasOrdenados[h.dia].push(h);
+    });
+
+    let html = '';
+    ordenDias.forEach(dia => {
+        if (diasOrdenados[dia]) {
+            html += `<div class="dia-group"><div class="dia-titulo">${dia}</div>`;
+            diasOrdenados[dia].forEach(h => {
+                const tieneVacantes = Object.values(h.categorias).some(v => v > 0);
+                const deshabilitado = !tieneVacantes ? 'deshabilitado' : '';
+                
+                let categoriasHtml = '';
+                Object.entries(h.categorias).forEach(([cat, vac]) => {
+                    const badge = vac > 0 ? `<span class="vacantes-badge disponibles">${vac} VACANTE${vac !== 1 ? 'S' : ''}</span>` : '<span class="vacantes-badge completo">COMPLETO</span>';
+                    categoriasHtml += `<div class="categoria"><span class="categoria-nombre">${cat}</span>${badge}</div>`;
+                });
+
+                html += `
+                    <div class="horario-card ${deshabilitado}" onclick="${tieneVacantes ? `abrirFormulario('${taller}', '${h.horario}', '${h.sede}', '${h.profesor}')` : 'return false'}">
+                        <div class="horario-header">
+                            <div>
+                                <div class="horario-tiempo">${h.horario}HS</div>
+                                <div class="horario-profesor">${h.profesor}</div>
+                            </div>
+                            <div class="horario-sede">${h.sede}</div>
+                        </div>
+                        <div class="categorias">${categoriasHtml}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+        }
+    });
+
+    grid.innerHTML = html;
+}
+
+function abrirFormulario(taller, horario, sede, profesor) {
+    tallerActual = { taller, horario, sede, profesor };
+    document.getElementById('formTaller').textContent = `${taller} - ${horario}HS`;
+    document.getElementById('formDetalles').textContent = `Sede: ${sede} | Profesor: ${profesor}`;
+    document.getElementById('modal').classList.add('active');
+    document.querySelector('.form-section').style.display = 'block';
+    document.getElementById('confirmacion').classList.remove('active');
+    document.getElementById('nombre').focus();
+}
+
+function cerrarModal() {
+    document.getElementById('modal').classList.remove('active');
+    document.getElementById('nombre').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('dni').value = '';
+    document.getElementById('telefono').value = '';
+    document.getElementById('fechaNacimiento').value = '';
+}
+
+function enviarFormulario(e) {
+    e.preventDefault();
+
+    const nombre = document.getElementById('nombre').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const dni = document.getElementById('dni').value.trim();
+    const telefono = document.getElementById('telefono').value.trim();
+    const fechaNacimiento = document.getElementById('fechaNacimiento').value;
+
+    // Validación simple
+    if (!nombre || !email || !dni || !telefono || !fechaNacimiento) {
+        alert('Por favor, completa todos los campos');
+        return false;
+    }
+
+    // Mostrar confirmación
+    document.querySelector('.form-section').style.display = 'none';
+    document.getElementById('confirmacion').classList.add('active');
+
+    // Llenar datos de confirmación
+    document.getElementById('confTaller').textContent = tallerActual.taller;
+    document.getElementById('confHorario').textContent = `${tallerActual.horario}HS`;
+    document.getElementById('confSede').textContent = tallerActual.sede;
+    document.getElementById('confProfesor').textContent = tallerActual.profesor;
+    document.getElementById('confDNI').textContent = dni;
+
+    // Crear mensaje de WhatsApp con DNI
+    const mensajeWhatsApp = `Hola! Me registré para ${tallerActual.taller} - ${tallerActual.horario}HS - Sede ${tallerActual.sede}. Mi DNI es ${dni}. ¿Me pueden compartir el grupo de WhatsApp?`;
+    const urlWhatsApp = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensajeWhatsApp)}`;
+    document.getElementById('whatsappBtn').href = urlWhatsApp;
+
+    // Guardar datos (simulado - en producción se enviaría a backend)
+    console.log('Inscripción registrada:', {
+        nombre, email, dni, telefono, fechaNacimiento,
+        taller: tallerActual.taller,
+        horario: tallerActual.horario,
+        sede: tallerActual.sede,
+        profesor: tallerActual.profesor
+    });
+
+    return false;
+}
+
+// Renderizar ambos talleres al cargar
+window.addEventListener('DOMContentLoaded', () => {
+    renderizarTaller('VIOLIN');
+    renderizarTaller('CANTO');
+});
+</script>
+
+</body>
+</html>
